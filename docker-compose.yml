@@ -1,0 +1,24 @@
+version: "3.6"
+
+services:
+  db:
+    image: mongo
+    container_name: pr9-db
+  web:
+    build: .
+    container_name: pr9-web
+    volumes:
+      - ./logging:/var/log/pr9
+    environment:
+      - PORT=:8080
+      - DB_NAME=myDB
+      - FILE_NAME=uploaded_file
+  proxy:
+    image: nginx:alpine
+    container_name: pr9-proxy
+    depends_on:
+      - web
+    volumes:
+      - ./proxy:/etc/nginx/conf.d
+    ports:
+      - "8080:80"
